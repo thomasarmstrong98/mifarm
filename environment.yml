@@ -31,13 +31,13 @@ dependencies:
   - pyparsing=2.4.7
   - pyqt=5.9.2
   - pyserial=3.5
-  - python=3.8.8
+  - python=3.7.1
   - python-dateutil=2.8.1
   - pytz=2021.1
   - qt=5.9.7
   - scipy=1.6.2
   - setuptools=52.0.0
-  - sip=4.19.13
+  - sip=4.19.8
   - six=1.15.0
   - sqlite=3.35.4
   - tk=8.6.10
@@ -49,3 +49,4 @@ dependencies:
   - xz=5.2.5
   - zlib=1.2.11
   - zstd=1.4.9
+
