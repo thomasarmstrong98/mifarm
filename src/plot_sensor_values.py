@@ -1,4 +1,5 @@
 import datetime as dt
+import pathlib
 
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
@@ -7,6 +8,7 @@ import pandas as pd
 pd.plotting.register_matplotlib_converters()
 
 VALID_SENSORS = ["Soil", "Temp", "Hum"]
+LOGFILE = str(pathlib.Path().absolute() / "log" / f"{dt.datetime.today().strftime('%Y-%m-%d')}.txt")
 
 
 def animate(i, logfile, sensor_axes, sensor_axes_config):
@@ -43,7 +45,7 @@ def animate(i, logfile, sensor_axes, sensor_axes_config):
             sensor_axes[sensor].legend(loc="upper right")
 
 
-def generate_plot_from_logs(logfile):
+def generate_plot_from_logs():
     fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
     fig.tight_layout()
 
@@ -59,5 +61,5 @@ def generate_plot_from_logs(logfile):
         "Temp": {"color": "red"},
     }
 
-    ani = animation.FuncAnimation(fig, animate, fargs=(logfile, sensor_axes, sensor_axes_config,), interval=1000)
+    ani = animation.FuncAnimation(fig, animate, fargs=(LOGFILE, sensor_axes, sensor_axes_config,), interval=1000)
     plt.show()

@@ -1,6 +1,6 @@
 import argparse
 
-from src.upload_to_arduino import upload_ino_script
+from src.arduino_upload import upload_ino_script
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='filepath for arduino script')

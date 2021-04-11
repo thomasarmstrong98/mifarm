@@ -1,35 +1,64 @@
 import fileinput
 import os
+import pathlib
 import shutil
 import subprocess
 import sys
 import time
 
+from src.utils.directory_navigation import get_path_to_rel_location
 
-def upload_ino_script(ino_script_path):
+
+def get_os_settings(os: str):
+    # check if I am running from linux or windows -> different file locations
+    os_system_settings = {
+        "win32": {
+            "arduinoInstall": "D:\\ProgramInstalls\\Arduino\\arduino",
+            "arduinoLibraries": "C:\\Users\\thomas_armstrong\\Documents\\Arduino\\libraries\\",
+            "inoLibrary": str(get_path_to_rel_location("mifarm") / "src" / "arduino"),
+            "buildOptions": {
+                "action": "verify",
+                "board": "arduino:avr:uno",
+                "port": "COM3",
+                "ide": "1.8.13",
+            }
+        },
+        "linux": {
+            "arduinoInstall": "/usr/local/bin/arduino",
+            "arduinoLibraries": "/home/thomas/Arduino/libraries",
+            "inoLibrary": str(get_path_to_rel_location("mifarm") / "src" / "arduino"),
+            "buildOptions": {
+                "action": "verify",
+                "board": "arduino:avr:uno",
+                "port": "/dev/ttyACM0",
+                "ide": "1.8.13",
+            }
+        }
+    }
+    return os_system_settings[os]
+
+
+def upload_ino_script(ino_script: str):
     print("====PyArduinoBuilder=====")
 
-    # create some background data
-    # these need to reflect the details of your system
+    settings = get_os_settings(sys.platform)
 
-    # where is the Arduino program
-    arduinoIdeVersion = {}
-    arduinoIdeVersion["1.8.13"] = "D:\\ProgramInstalls\\Arduino\\arduino"
+    # define variables to make the upload easier to follow
+
+    # where ide is installed
+    arduinoIdeVersion = {
+        settings["buildOptions"]["ide"]: settings["arduinoInstall"]
+    }
 
     # where are libraries stored
-    arduinoExtraLibraries = "C:\\Users\\thomas_armstrong\\Documents\\Arduino\\libraries\\"
+    arduinoExtraLibraries = settings["arduinoLibraries"]
 
-    # where this program will store stuff
-    # these directories will be beside this Python program
-    compileDirName = "D:\\projects\\mifarm\\tmp\\arduino\\ArduinoTemp"
-    archiveDirName = "D:\\projects\\mifarm\\tmp\\arduino\\ArduinoUploadArchive"
+    # temporary filestore of arduino scripts
+    compileDirName = str(get_path_to_rel_location("mifarm") / "tmp" / "arduino" / "ArduinoTemp")
+    archiveDirName = str(get_path_to_rel_location("mifarm") / "tmp" / "arduino" / "ArduinoUploadArchive")
 
     # default build options
-    buildOptions = {}
-    buildOptions["action"] = "verify"
-    buildOptions["board"] = "arduino:avr:uno"
-    buildOptions["port"] = "COM3"
-    buildOptions["ide"] = "1.8.13"
+    buildOptions = settings["buildOptions"]
 
     # some other important variables - just here for easy reference
     archiveRequired = False
@@ -67,7 +96,7 @@ def upload_ino_script(ino_script_path):
     # // ide, 1.5.6-r2
     # // python-build-end
 
-    inoFileName = ino_script_path
+    inoFileName = str(pathlib.Path(settings["inoLibrary"]) / ino_script)
     inoBaseName, inoExt = os.path.splitext(os.path.basename(inoFileName))
 
     numLines = 1  # in case there is no end-line
